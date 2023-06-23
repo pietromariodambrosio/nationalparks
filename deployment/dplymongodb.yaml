@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  generation: 2
+  labels:
+    app: mongodb-nationalparks
+    app.kubernetes.io/component: mongodb-nationalparks
+    app.kubernetes.io/instance: mongodb-nationalparks
+    app.kubernetes.io/name: mongodb
+    app.kubernetes.io/part-of: national-parks-app
+  name: mongodb-nationalparks
+  namespace: nationalparksapp
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mongodb
+      app.kubernetes.io/part-of: national-parks-app
+      deployment: mongodb-nationalparks
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app.kubernetes.io/name: mongodb
+        app.kubernetes.io/part-of: national-parks-app
+        deployment: mongodb-nationalparks
+    spec:
+      containers:
+      - env:
+        - name: MONGODB_ADMIN_PASSWORD
+          value: mongodb
+        - name: MONGODB_DATABASE
+          value: mongodb
+        - name: MONGODB_PASSWORD
+          value: mongodb
+        - name: MONGODB_USER
+          value: mongodb
+        image: quay.io/centos7/mongodb-36-centos7@sha256:29688b31c40a0c8aceb454e244af48e04ebf2939979e5c2b782c8e94b665ae2b
+        imagePullPolicy: IfNotPresent
+        name: mongodb-nationalparks
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: national-parks-app
+    app.kubernetes.io/part-of: national-parks-app
+    component: parksmap
+    role: frontend
+  name: parksmap
+  namespace: nationalparksapp
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: national-parks-app
+    app.kubernetes.io/part-of: national-parks-app
+    component: parksmap
+    deployment: parksmap
+    role: frontend
+  sessionAffinity: None
+  type: ClusterIP

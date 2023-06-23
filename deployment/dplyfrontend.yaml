@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  generation: 2
+  labels:
+    app: national-parks-app
+    app.kubernetes.io/part-of: national-parks-app
+    component: parksmap
+    role: frontend
+  name: parksmap
+  namespace: nationalparksapp
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: national-parks-app
+      app.kubernetes.io/part-of: national-parks-app
+      component: parksmap
+      deployment: parksmap
+      role: frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      labels:
+        app: national-parks-app
+        app.kubernetes.io/part-of: national-parks-app
+        component: parksmap
+        deployment: parksmap
+        role: frontend
+    spec:
+      containers:
+      - image: quay.io/openshiftroadshow/parksmap@sha256:89d1e324846cb431df9039e1a7fd0ed2ba0c51aafbae73f2abd70a83d5fa173b
+        imagePullPolicy: IfNotPresent
+        name: parksmap
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

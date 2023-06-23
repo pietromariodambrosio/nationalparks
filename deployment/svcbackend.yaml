@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: national-parks-app
+    app.kubernetes.io/name: python
+    app.kubernetes.io/part-of: national-parks-app
+    component: nationalparks
+    role: backend
+  name: nationalparks
+  namespace: nationalparksapp
+spec:
+  internalTrafficPolicy: Cluster
+  ipFamilies:
+  - IPv4
+  ipFamilyPolicy: SingleStack
+  ports:
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: national-parks-app
+    app.kubernetes.io/name: python
+    app.kubernetes.io/part-of: national-parks-app
+    component: nationalparks
+    deployment: nationalparks
+    role: backend
+  sessionAffinity: None
+  type: ClusterIP

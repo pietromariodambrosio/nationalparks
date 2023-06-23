@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  generation: 3
+  labels:
+    app: national-parks-app
+    app.kubernetes.io/name: python
+    app.kubernetes.io/part-of: national-parks-app
+    component: nationalparks
+    role: backend
+  name: nationalparks
+  namespace: nationalparksapp
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: national-parks-app
+      app.kubernetes.io/name: python
+      app.kubernetes.io/part-of: national-parks-app
+      component: nationalparks
+      deployment: nationalparks
+      role: backend
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      labels:
+        app: national-parks-app
+        app.kubernetes.io/name: python
+        app.kubernetes.io/part-of: national-parks-app
+        component: nationalparks
+        deployment: nationalparks
+        role: backend
+    spec:
+      containers:
+      - env:
+        - name: MONGODB_USER
+          valueFrom:
+            secretKeyRef:
+              key: MONGODB_USER
+              name: nationalparks-mongodb-parameters
+        - name: DATABASE_SERVICE_NAME
+          valueFrom:
+            secretKeyRef:
+              key: DATABASE_SERVICE_NAME
+              name: nationalparks-mongodb-parameters
+        - name: MONGODB_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MONGODB_ADMIN_PASSWORD
+              name: nationalparks-mongodb-parameters
+        - name: MONGODB_DATABASE
+          valueFrom:
+            secretKeyRef:
+              key: MONGODB_DATABASE
+              name: nationalparks-mongodb-parameters
+        - name: MONGODB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: MONGODB_PASSWORD
+              name: nationalparks-mongodb-parameters
+        image: psnpaascr.azurecr.io/test-acm/nationalparks:latest
+        imagePullPolicy: IfNotPresent
+        name: nationalparks
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        resources: {}
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: access-git
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
